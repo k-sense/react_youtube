@@ -1,24 +1,25 @@
 import './App.css';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import VideoList from './components/video_list/video_List';
+import SearchHeader from './components/search_header/search_header';
+import styles from './App.module.css';
 
-function App() {
+function App({ youtube }) {
 	const [videos, setVideos] = useState([]);
+	const search = (query) => {
+		youtube
+			.search(query) //
+			.then((videos) => setVideos(videos));
+	};
 
 	useEffect(() => {
-		axios
-			.get(
-				'https://www.googleapis.com/youtube/v3/videos?part=snippet&chart=mostPopular&maxResults=25&key=AIzaSyAV5Q8_5cbKxRoKiLORukLxrE5wfEdk9Pk'
-			)
-			.then((result) => {
-				console.log(result.items);
-				setVideos(result.data.items);
-				// result.data.items.map((item) => setVideos(item.snippet.title));
-			});
+		youtube
+			.mostPopular() //
+			.then((videos) => setVideos(videos));
 	}, []);
 	return (
-		<div>
+		<div className={styles.app}>
+			<SearchHeader onSearch={search} />
 			<VideoList videos={videos}></VideoList>
 		</div>
 	);
